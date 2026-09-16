@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Management System - Login</title>
+    <style>
+        /* Global CSS Reset and Typography Configuration */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Body styling with a modern gradient layout background */
+        body {
+            background: linear-gradient(135deg, #8a4fff, #4deeea);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Glassmorphism login container card alignment box */
+        .login-container {
+            width: 100%;
+            max-width: 500px;
+            padding: 40px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Header Title Typography Design */
+        h1 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #000;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Circular Brand Logo placeholder component layout styling */
+        .logo-box {
+            background-color: #fff;
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 35px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .logo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Form Field Element Structure layouts */
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            width: 130px;
+            text-align: left;
+            font-size: 16px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .form-control {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background-color: #cbd5e1;
+            font-size: 15px;
+            color: #000;
+            outline: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            background-color: #e2e8f0;
+            box-shadow: 0 0 8px rgba(6, 182, 212, 0.5);
+        }
+
+        /* Action buttons grouping panel alignments */
+        .button-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 35px;
+        }
+
+        .btn {
+            background-color: #71717a;
+            color: #fff;
+            border: none;
+            padding: 12px 35px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            background-color: #27272a;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-container">
+        <h1>Hostel Management System</h1>
+
+        <div class="logo-box">
+            <img src="logo.png" alt="LOGO" onerror="this.style.display='none'; this.parentNode.innerText='LOGO';">
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label>User Name</label>
+                <input type="text" name="unametxt" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="pwdtxt" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label>Role</label>
+                <select name="role" class="form-control">
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn">Log</button>
+                <button type="button" id="clearBtn" class="btn" style="background-color: #ef4444;">Delete</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Event listener to reset/flush the login form fields upon clicking Delete
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            document.getElementById('loginForm').reset();
+        });
+
+        // Async AJAX form submission event handler connecting to the login.php backend API
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Intercept and prevent the default browser page reload behavior
+
+            const formData = new FormData(e.target);
+            formData.append('btn_log', 'true'); // Form injection matching backend post validation keys
+
+            try {
+                // Dispatching post network requests to backend server asynchronously
+                const response = await fetch('login.php', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include' // Attaches session tracking tokens (cookies) securely
+                });
+
+                const data = await response.json(); // Parsing JSON stream output
+
+                if (data.status === 'success') {
+                    alert(data.message);
+                    window.location.href = 'dashboard.html'; // Client redirect sequence on successful match
+                } else {
+                    alert(data.message); // Flash dynamic failure warnings from server
+                }
+            } catch (error) {
+                alert('Connection failure with backend API!');
+            }
+        });
+    </script>
+</body>
+
+</html>

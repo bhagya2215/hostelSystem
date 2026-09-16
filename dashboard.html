@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostel Management System - Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* Modern UI Style Guide Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            min-height: 100vh;
+            color: #f8fafc;
+        }
+
+        .main-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 280px;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 30px 20px;
+            flex-shrink: 0;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-container {
+            width: 110px;
+            height: 110px;
+            background: #fff;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(56, 189, 248, 0.3);
+            border: 3px solid #38bdf8;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .menu-card {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-header {
+            background: linear-gradient(90deg, #0ea5e9, #2563eb);
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            text-decoration: none;
+            color: #94a3b8;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover,
+        .menu-item.active {
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            padding-left: 25px;
+        }
+
+        .menu-item input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: #38bdf8;
+            cursor: pointer;
+        }
+
+        /* Content Area Container */
+        .content-area {
+            flex: 1;
+            padding: 40px;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            border-radius: 30px;
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
+            color: white;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4), inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+        }
+
+        h2 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #38bdf8;
+            border-bottom: 2px solid #38bdf8;
+            padding-bottom: 8px;
+            width: max-content;
+        }
+
+        /* Form UI Styling */
+        .input-form-box {
+            background: rgba(30, 41, 59, 0.4);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(5px);
+        }
+
+        .input-field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-field-group label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        .input-field-group input,
+        .input-field-group select {
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 14px;
+            background: #1e293b;
+            color: #f8fafc;
+            font-weight: 500;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        .input-field-group input:focus,
+        .input-field-group select:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+        }
+
+        /* Modern Table Layout Design */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 25px;
+            background: #1e293b;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 15px;
+            text-align: center;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .data-table th {
+            background-color: #0f172a;
+            font-weight: 600;
+            color: #38bdf8;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table tbody tr {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .data-table tbody tr.selected-row {
+            background-color: rgba(14, 165, 233, 0.15) !important;
+            border-left: 4px solid #38bdf8;
+        }
+
+        /* 3D Premium Glow Button Styling */
+        .btn {
+            color: white;
+            font-weight: 700;
+            border: none;
+            padding: 12px 28px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-4px);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            box-shadow: 0 5px 15px rgba(14, 165, 233, 0.4), inset 0 -4px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-add:hover {
+            box-shadow: 0 8px 25px rgba(14, 165, 233, 0.6);
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4), inset 0 -4px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-edit:hover {
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.6);
+        }
+
+        .btn-clear {
+            background: linear-gradient(135deg, #64748b, #475569);
+            box-shadow: 0 5px 15px rgba(100, 116, 139, 0.4), inset 0 -4px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-clear:hover {
+            box-shadow: 0 8px 25px rgba(100, 116, 139, 0.6);
+        }
+
+        .btn-pay {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            box-shadow: 0 5px 15px rgba(34, 197, 94, 0.4), inset 0 -4px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-pay:hover {
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.6);
+        }
+
+        .btn-action-group {
+            margin-top: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        /* Advanced Glassmorphism Dashboard Overview */
+        .dashboard-container {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        /* Blurred Logo Watermark Effect */
+        .dashboard-watermark {
+            position: fixed;
+            top: 55%;
+            left: 60%;
+            transform: translate(-50%, -50%);
+            width: 450px;
+            height: 450px;
+            opacity: 0.04;
+            pointer-events: none;
+            filter: blur(2px);
+            z-index: 0;
+        }
+
+        .counter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .counter-card {
+            background: rgba(30, 41, 59, 0.55);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .counter-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+        }
+
+        .card-blue::before {
+            background: #38bdf8;
+        }
+
+        .card-blue {
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.05);
+        }
+
+        .card-blue:hover {
+            border-color: #38bdf8;
+            box-shadow: 0 15px 35px rgba(56, 189, 248, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .card-amber::before {
+            background: #f59e0b;
+        }
+
+        .card-amber {
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.05);
+        }
+
+        .card-amber:hover {
+            border-color: #f59e0b;
+            box-shadow: 0 15px 35px rgba(245, 158, 11, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .card-purple::before {
+            background: #a855f7;
+        }
+
+        .card-purple {
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.05);
+        }
+
+        .card-purple:hover {
+            border-color: #a855f7;
+            box-shadow: 0 15px 35px rgba(168, 85, 247, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .card-title {
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .card-value {
+            font-size: 42px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+        }
+
+        /* PDF Printing Optimization Styles */
+        #reportDocumentWrapper {
+            margin-top: 30px;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            display: none;
+            color: black;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .pdf-header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #1e293b;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .pdf-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+        }
+
+        .pdf-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .pdf-table th {
+            background-color: #1e293b !important;
+            color: white !important;
+            padding: 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            border: 1px solid #cbd5e1;
+        }
+
+        .pdf-table td {
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            text-align: center;
+            font-size: 13px;
+            color: #334155;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main-wrapper">
+        <div class="sidebar">
+            <div class="logo-container">
+                <img src="logo.png" alt="Hostel Logo"
+                    onerror="this.style.display='none'; this.parentNode.innerText='LOGO';">
+            </div>
+            <div class="menu-card">
+                <div class="menu-header">Menu</div>
+                <div class="menu-item active" onclick="switchView('dashboardView', this)"><input type="radio" checked
+                        id="rad_dashboardView" name="m_opt"> Dashboard</div>
+                <div class="menu-item" onclick="switchView('studentsView', this)"><input type="radio"
+                        id="rad_studentsView" name="m_opt"> Students</div>
+                <div class="menu-item" onclick="switchView('roomsView', this)"><input type="radio" id="rad_roomsView"
+                        name="m_opt"> Rooms</div>
+                <div class="menu-item" onclick="switchView('allocationView', this)"><input type="radio"
+                        id="rad_allocationView" name="m_opt"> Allocation</div>
+                <div class="menu-item" onclick="switchView('paymentsView', this)"><input type="radio"
+                        id="rad_paymentsView" name="m_opt"> Payments</div>
+                <div class="menu-item" onclick="switchView('reportsView', this)"><input type="radio"
+                        id="rad_reportsView" name="m_opt"> Reports</div>
+                <div class="menu-item" onclick="switchView('adminRegisterView', this)"><input type="radio"
+                        id="rad_adminRegisterView" name="m_opt"> Register Admin</div>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <button class="logout-btn" onclick="location.href='login.html'">Logout</button>
+
+            <div id="dashboardView" class="view-panel class-dashboard">
+                <h2>Dashboard Overview</h2>
+                <div class="dashboard-container">
+                    <img src="logo.png" class="dashboard-watermark" alt="">
+                    <div class="counter-grid">
+                        <div class="counter-card card-blue">
+                            <div class="card-title">Total Students</div>
+                            <div class="card-value"><span id="cnt_students">0</span> / 225</div>
+                        </div>
+                        <div class="counter-card card-amber">
+                            <div class="card-title">Available Rooms</div>
+                            <div class="card-value"><span id="cnt_rooms">0</span> / 50</div>
+                        </div>
+                        <div class="counter-card card-purple">
+                            <div class="card-title">Total Admins</div>
+                            <div class="card-value" id="cnt_staff">1</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="studentsView" class="view-panel" style="display:none;">
+                <h2>Manage Students</h2>
+                <form id="studentForm" class="input-form-box">
+                    <div class="input-field-group"><label>Student ID</label><input type="text" id="student_id"
+                            placeholder="Auto-filled" readonly
+                            style="background: rgba(255,255,255,0.05); color: #94a3b8;"></div>
+                    <div class="input-field-group"><label>Full Name</label><input type="text" id="name" required></div>
+                    <div class="input-field-group"><label>NIC</label><input type="text" id="nic" required></div>
+                    <div class="input-field-group"><label>Gender</label><select id="gender">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select></div>
+                    <div class="input-field-group"><label>DOB</label><input type="date" id="dob"></div>
+                    <div class="input-field-group"><label>Address</label><input type="text" id="address"></div>
+                    <div class="input-field-group"><label>Phone No</label><input type="text" id="phone_no" required>
+                    </div>
+                    <div class="input-field-group"><label>Parent Name</label><input type="text" id="parent_name"></div>
+                    <div class="input-field-group"><label>Parent Contact</label><input type="text" id="parent_no"></div>
+                </form>
+                <div class="table-container">
+                    <table class="data-table" id="studentsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>NIC</th>
+                                <th>Gender</th>
+                                <th>DOB</th>
+                                <th>Address</th>
+                                <th>Phone</th>
+                                <th>Parent</th>
+                                <th>Parent Phone</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="btn-action-group">
+                    <button class="btn btn-add"
+                        onclick="executeCRUD('students.php', 'add_student', 'studentForm')">Add</button>
+                    <button class="btn btn-edit"
+                        onclick="executeCRUD('students.php', 'edit_student', 'studentForm')">Edit</button>
+                    <button class="btn btn-clear"
+                        onclick="executeDelete('students.php', 'delete_student', 'student_id', 'studentForm')">Clear</button>
+                </div>
+            </div>
+
+            <div id="roomsView" class="view-panel" style="display:none;">
+                <h2>Manage Rooms</h2>
+                <form id="roomForm" class="input-form-box">
+                    <div class="input-field-group"><label>Room ID</label><input type="text" id="room_id" readonly
+                            style="background: rgba(255,255,255,0.05); color: #94a3b8;"></div>
+                    <div class="input-field-group"><label>Room No</label><input type="text" id="room_no" required></div>
+                    <div class="input-field-group"><label>Room Type</label><select id="room_type">
+                            <option value="AC">AC</option>
+                            <option value="Non-AC">Non-AC</option>
+                        </select></div>
+                    <div class="input-field-group"><label>Capacity</label><input type="number" id="capacity" required
+                            readonly>
+                    </div>
+                    <div class="input-field-group"><label>Status</label><select id="status">
+                            <option value="available">available</option>
+                            <option value="maintenance">maintenance</option>
+                        </select></div>
+                </form>
+                <div class="table-container">
+                    <table class="data-table" id="roomsTable">
+                        <thead>
+                            <tr>
+                                <th>Room ID</th>
+                                <th>Room No</th>
+                                <th>Type</th>
+                                <th>Capacity</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="btn-action-group">
+                    <button class="btn btn-add" onclick="executeCRUD('rooms.php', 'add_room', 'roomForm')">Add</button>
+                    <button class="btn btn-edit"
+                        onclick="executeCRUD('rooms.php', 'edit_room', 'roomForm')">Edit</button>
+                    <button class="btn btn-clear"
+                        onclick="executeDelete('rooms.php', 'delete_room', 'room_id', 'roomForm')">Clear</button>
+                </div>
+            </div>
+
+            <div id="allocationView" class="view-panel" style="display:none;">
+                <h2>Room Allocation</h2>
+                <form id="allocationForm" class="input-form-box">
+                    <div class="input-field-group"><label>Allocation ID</label><input type="text" id="allocation_id"
+                            readonly style="background: rgba(255,255,255,0.05); color: #94a3b8;"></div>
+                    <div class="input-field-group"><label>Student ID</label><select id="alloc_student_id"
+                            class="student-id-dropdown"></select></div>
+                    <div class="input-field-group"><label>Room ID</label><select id="alloc_room_id"
+                            class="form-control room-id-dropdown" required>
+                        </select>
+                    </div>
+                    <div class="input-field-group"><label>Allocation Date</label><input type="date"
+                            id="allocation_date"></div>
+                    <div class="input-field-group"><label>Status</label><select id="alloc_status">
+                            <option value="active">active</option>
+                            <option value="checked_out">checked_out</option>
+                        </select></div>
+                </form>
+                <div class="table-container">
+                    <table class="data-table" id="allocationsTable">
+                        <thead>
+                            <tr>
+                                <th>Allocation ID</th>
+                                <th>Student ID</th>
+                                <th>Room ID</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="btn-action-group">
+                    <button class="btn btn-add" onclick="executeAllocation('allocate_room')">Allocate Room
+                        (Add)</button>
+                    <button class="btn btn-clear" onclick="executeAllocation('release_room')">Check Out
+                        (Release)</button>
+                </div>
+            </div>
+
+            <div id="paymentsView" class="view-panel" style="display:none;">
+                <h2>Payments Management</h2>
+                <form id="paymentForm" class="input-form-box">
+                    <div class="input-field-group"><label>Payment ID</label><input type="text" id="payment_id" readonly
+                            style="background: rgba(255,255,255,0.05); color: #94a3b8;"></div>
+                    <div class="input-field-group"><label>Student ID</label><select id="pay_student_id"
+                            class="student-id-dropdown"></select></div>
+                    <div class="input-field-group"><label>Amount</label><input type="text" id="amount" required></div>
+                    <div class="input-field-group"><label>Month</label><input type="text" id="month"
+                            placeholder="e.g. June"></div>
+                    <div class="input-field-group"><label>Year</label><input type="number" id="year" value="2026"></div>
+                </form>
+                <div class="table-container">
+                    <table class="data-table" id="paymentsTable">
+                        <thead>
+                            <tr>
+                                <th>Payment ID</th>
+                                <th>Student ID</th>
+                                <th>Amount</th>
+                                <th>Month</th>
+                                <th>Year</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="btn-action-group">
+                    <button class="btn btn-add" onclick="executePayment('add_payment')">Record Payment (Add)</button>
+                    <button class="btn btn-pay" onclick="executePayment('mark_as_paid')">Mark As Paid</button>
+                    <button class="btn btn-clear" onclick="executePayment('void_payment')">Void Payment</button>
+                </div>
+            </div>
+
+            <div id="reportsView" class="view-panel" style="display:none;">
+                <h2>System Reports</h2>
+                <div class="input-form-box">
+                    <div class="input-field-group"><label>Select Student ID</label><select id="rep_student_id"
+                            class="student-id-dropdown"></select></div>
+                    <div class="input-field-group"><label>Report Type</label><select id="rep_type">
+                            <option value="payment_details">Payment Details</option>
+                            <option value="room_allocation_details">Room Allocation Details</option>
+                        </select></div>
+                </div>
+                <div class="btn-action-group">
+                    <button class="btn btn-add" onclick="generateReport()">View Report</button>
+                    <button class="btn btn-pay" onclick="exportPDF()">Export PDF</button>
+                </div>
+
+                <div id="reportDocumentWrapper">
+                    <div class="pdf-header-container">
+                        <div>
+                            <h2 style="display: block; border: none; margin: 0; color: #1e293b; font-size: 24px;"
+                                id="pdfReportTitle">REPORT</h2>
+                            <p style="margin-top: 5px; font-weight: bold; color: #64748b;">Hostel Management System</p>
+                            <p style="margin-top: 2px; font-size: 13px; color: #94a3b8;">Generated Date: <span
+                                    id="pdf_date"></span></p>
+                        </div>
+                        <img src="logo.png" class="pdf-logo" alt="Logo" onerror="this.style.display='none';">
+                    </div>
+                    <table class="pdf-table" id="reportPreviewTable">
+                        <thead>
+                            <tr id="reportThRow"></tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="adminRegisterView" class="view-panel" style="display:none;">
+                <h2>Register Admin Management</h2>
+                <form id="adminForm" class="input-form-box">
+                    <div class="input-field-group"><label>Admin ID</label><input type="text" id="admin_id"
+                            placeholder="Auto-filled" readonly
+                            style="background: rgba(255,255,255,0.05); color: #94a3b8;"></div>
+                    <div class="input-field-group"><label>Role</label><input type="text" id="admin_role" value="admin"
+                            readonly style="background: rgba(255,255,255,0.05); color: #94a3b8;"></div>
+                    <div class="input-field-group"><label>Username</label><input type="text" id="admin_username"
+                            required></div>
+                    <div class="input-field-group"><label>Password</label><input type="password" id="admin_password"
+                            required></div>
+                </form>
+                <div class="table-container">
+                    <table class="data-table" id="adminTable">
+                        <thead>
+                            <tr>
+                                <th>Admin ID</th>
+                                <th>Username</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="btn-action-group">
+                    <button class="btn btn-add" onclick="executeAdminCRUD('add_admin')">Add</button>
+                    <button class="btn btn-clear" onclick="executeAdminCRUD('delete_admin')">Clear</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            updateCounters();
+            loadTables();
+        });
+
+        function switchView(viewId, element) {
+            document.querySelectorAll('.view-panel').forEach(p => p.style.display = 'none');
+            document.getElementById(viewId).style.display = 'block';
+            document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+            element.classList.add('active');
+
+            const rad = document.getElementById(`rad_${viewId}`);
+            if (rad) rad.checked = true;
+
+            updateCounters();
+        }
+
+        function clearForm(formId) {
+            document.getElementById(formId).reset();
+            document.querySelectorAll('tr').forEach(tr => tr.classList.remove('selected-row'));
+        }
+
+        async function updateCounters() {
+            try {
+                const fd = new FormData();
+
+                // Fetch students list and update the base counter digit safely
+                const res1 = await fetch('students.php', { method: 'POST', body: fd });
+                const stds = await res1.json();
+                const studentCount = Array.isArray(stds) ? stds.length : 0;
+                document.getElementById('cnt_students').innerText = studentCount;
+                setStudentDropdowns(stds);
+
+                // Fetch rooms list and update the available counter digit safely
+                const res2 = await fetch('rooms.php', { method: 'POST', body: fd });
+                const rms = await res2.json();
+                const roomCount = Array.isArray(rms) ? rms.filter(r => r.status === 'available').length : 0;
+                document.getElementById('cnt_rooms').innerText = roomCount;
+                setRoomDropdowns(rms);
+
+                // Fetch admin list and update system staff count
+                const res3 = await fetch('register_admin.php', { method: 'POST', body: fd });
+                const staff = await res3.json();
+                document.getElementById('cnt_staff').innerText = Array.isArray(staff) ? staff.length : 1;
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function setStudentDropdowns(list) {
+            document.querySelectorAll('.student-id-dropdown').forEach(drop => {
+                const cur = drop.value;
+                drop.innerHTML = '<option value="">-- Select Student --</option>';
+                if (Array.isArray(list)) {
+                    list.forEach(s => {
+                        const opt = document.createElement('option');
+                        opt.value = s.student_id;
+                        opt.innerText = `ID: ${s.student_id} - ${s.name}`;
+                        drop.appendChild(opt);
+                    });
+                }
+                if (cur) drop.value = cur;
+            });
+        }
+
+        // Dynamic dropdown list generator for room allocation panel
+        function setRoomDropdowns(list) {
+            const drop = document.getElementById('alloc_room_id');
+            if (drop) {
+                const cur = drop.value;
+                drop.innerHTML = '<option value="">-- Select Room --</option>';
+                if (Array.isArray(list)) {
+                    list.forEach(r => {
+                        const opt = document.createElement('option');
+                        opt.value = r.room_id;
+                        opt.innerText = `Room: ${r.room_no} (${r.room_type})`;
+                        drop.appendChild(opt);
+                    });
+                }
+                if (cur) drop.value = cur;
+            }
+        }
+
+        function loadTables() {
+            showGrid('students.php', 'studentsTable', ['student_id', 'name', 'nic', 'gender', 'dob', 'address', 'phone_no', 'parent_name', 'parent_no'], 'studentForm');
+            showGrid('rooms.php', 'roomsTable', ['room_id', 'room_no', 'room_type', 'capacity', 'status'], 'roomForm');
+            showGrid('allocations.php', 'allocationsTable', ['allocation_id', 'student_id', 'room_id', 'allocation_date', 'status'], 'allocationForm');
+            showGrid('payments.php', 'paymentsTable', ['payemnt_id', 'student_id', 'amount', 'month', 'year', 'status'], 'paymentForm');
+            showGrid('register_admin.php', 'adminTable', ['id', 'username'], 'adminForm');
+        }
+
+        async function showGrid(url, tableId, keys, formId) {
+            try {
+                const fd = new FormData();
+                const res = await fetch(url, { method: 'POST', body: fd });
+                const rows = await res.json();
+                const tbody = document.getElementById(tableId).querySelector('tbody');
+                tbody.innerHTML = "";
+
+                if (Array.isArray(rows)) {
+                    rows.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.addEventListener('click', () => {
+                            document.querySelectorAll(`#${tableId} tbody tr`).forEach(r => r.classList.remove('selected-row'));
+                            tr.classList.add('selected-row');
+
+                            keys.forEach(k => {
+                                let input = document.getElementById(k);
+                                if (!input) {
+                                    input = document.getElementById(`alloc_${k}`) ||
+                                        document.getElementById(`pay_${k}`) ||
+                                        document.getElementById(`admin_${k}`);
+                                }
+                                if (!input && k === 'payemnt_id') {
+                                    input = document.getElementById('payment_id');
+                                }
+                                if (input) {
+                                    input.value = row[k] || '';
+                                }
+                            });
+
+                            // Set standard form capacity text based on database selection on table click
+                            if (tableId === 'roomsTable') {
+                                const capInput = document.getElementById('capacity');
+                                if (row['room_type'] === 'AC' || row['room_type'] === 'ac') capInput.value = 5;
+                                else capInput.value = 4;
+                            }
+                        });
+
+                        keys.forEach(k => {
+                            const td = document.createElement('td');
+                            td.innerText = row[k] || '';
+                            tr.appendChild(td);
+                        });
+                        tbody.appendChild(tr);
+                    });
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function executeCRUD(url, action, formId) {
+            // Strict live check for room capacity boundaries on action trigger
+            if (action === 'add_room' || action === 'edit_room') {
+                const type = document.getElementById('room_type').value;
+                const cap = parseInt(document.getElementById('capacity').value, 10);
+
+                if (type === 'AC' && cap > 5) {
+                    alert("Error: AC rooms cannot have a capacity greater than 5!");
+                    return;
+                }
+                if (type === 'Non-AC' && cap > 4) {
+                    alert("Error: Non-AC rooms cannot have a capacity greater than 4!");
+                    return;
+                }
+            }
+
+            const form = document.getElementById(formId);
+            const data = new FormData();
+            data.append('action', action);
+
+            Array.from(form.elements).forEach(input => {
+                if (input.id && input.id !== '') {
+                    let key = input.id;
+                    if (key.startsWith('pay_')) key = key.replace('pay_', '');
+                    if (key.startsWith('alloc_')) key = key.replace('alloc_', '');
+                    data.append(key, input.value);
+                }
+            });
+
+            const res = await fetch(url, { method: 'POST', body: data });
+            const result = await res.json();
+
+            if (result.status === "error") {
+                alert(result.message);
+            } else {
+                loadTables();
+                updateCounters();
+                clearForm(formId);
+            }
+        }
+
+        async function executeDelete(url, action, keyId, formId) {
+            const idVal = document.getElementById(keyId).value;
+            if (!idVal) return;
+
+            const data = new FormData();
+            data.append('action', action);
+            data.append(keyId, idVal);
+
+            const res = await fetch(url, { method: 'POST', body: data });
+            const result = await res.json();
+
+            if (result.status === "error") {
+                alert(result.message);
+            } else {
+                loadTables();
+                updateCounters();
+                clearForm(formId);
+            }
+        }
+
+        async function executeAllocation(action) {
+            const data = new FormData();
+            data.append('action', action);
+            data.append('allocation_id', document.getElementById('allocation_id').value);
+            data.append('student_id', document.getElementById('alloc_student_id').value);
+            data.append('room_id', document.getElementById('alloc_room_id').value);
+            data.append('allocation_date', document.getElementById('allocation_date').value);
+            data.append('status', document.getElementById('alloc_status').value);
+
+            const res = await fetch('allocations.php', { method: 'POST', body: data });
+            const result = await res.json();
+
+            if (result.status === "error") {
+                alert(result.message);
+            } else {
+                loadTables();
+                updateCounters();
+                clearForm('allocationForm');
+            }
+        }
+
+        async function executePayment(action) {
+            const data = new FormData();
+            data.append('action', action);
+            data.append('payemnt_id', document.getElementById('payment_id').value);
+            data.append('student_id', document.getElementById('pay_student_id').value);
+            data.append('amount', document.getElementById('amount').value);
+            data.append('month', document.getElementById('month').value);
+            data.append('year', document.getElementById('year').value);
+
+            const res = await fetch('payments.php', { method: 'POST', body: data });
+            const result = await res.json();
+
+            if (result.status === "error") {
+                alert(result.message);
+            } else {
+                loadTables();
+                updateCounters();
+                clearForm('paymentForm');
+            }
+        }
+
+        async function executeAdminCRUD(action) {
+            const data = new FormData();
+            data.append('action', action);
+            data.append('id', document.getElementById('admin_id').value);
+            data.append('username', document.getElementById('admin_username').value);
+            data.append('password', document.getElementById('admin_password').value);
+
+            const res = await fetch('register_admin.php', { method: 'POST', body: data });
+            const result = await res.json();
+
+            if (result.status === "error") {
+                alert(result.message || "Operation Failed");
+            } else {
+                loadTables();
+                updateCounters();
+                clearForm('adminForm');
+            }
+        }
+
+        async function generateReport() {
+            const stdId = document.getElementById('rep_student_id').value;
+            const repType = document.getElementById('rep_type').value;
+
+            const url = repType === 'payment_details' ? 'payments.php' : 'allocations.php';
+            const cols = repType === 'payment_details' ? ['payemnt_id', 'student_id', 'amount', 'month', 'year', 'status'] : ['allocation_id', 'student_id', 'room_id', 'allocation_date', 'status'];
+
+            document.getElementById('pdfReportTitle').innerText = repType.toUpperCase().replace(/_/g, ' ');
+            document.getElementById('pdf_date').innerText = new Date().toLocaleDateString();
+
+            const thr = document.getElementById('reportThRow');
+            thr.innerHTML = "";
+
+            cols.forEach(k => {
+                let title = k.toUpperCase().replace('PAYEMNT', 'PAYMENT').replace('_', ' ');
+                thr.innerHTML += `<th style="background-color: #1e293b; color: #ffffff; padding: 12px; font-size: 13px; font-weight: bold; border: 1px solid #cbd5e1;">${title}</th>`;
+            });
+
+            try {
+                const fd = new FormData();
+                const res = await fetch(url, { method: 'POST', body: fd });
+                const rows = await res.json();
+                const tbody = document.getElementById('reportPreviewTable').querySelector('tbody');
+                tbody.innerHTML = "";
+
+                if (Array.isArray(rows)) {
+                    const filtered = rows.filter(r => String(r.student_id).trim() == String(stdId).trim());
+
+                    if (filtered.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="${cols.length}" style="color: #000000; text-align: center; font-style: italic; padding: 20px;">No records found for this Student ID</td></tr>`;
+                    } else {
+                        filtered.forEach(row => {
+                            let html = "<tr>";
+                            cols.forEach(k => {
+                                html += `<td style="color: #000000; padding: 12px; border: 1px solid #cbd5e1; text-align: center; font-size: 13px;">${row[k] || ''}</td>`;
+                            });
+                            html += "</tr>";
+                            tbody.innerHTML += html;
+                        });
+                    }
+                }
+                document.getElementById('reportDocumentWrapper').style.display = "block";
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function exportPDF() {
+            const wrapper = document.getElementById('reportDocumentWrapper');
+            if (wrapper.style.display === "none" || wrapper.style.display === "") {
+                alert("Please click 'View Report' first before exporting.");
+                return;
+            }
+            const stdId = document.getElementById('rep_student_id').value;
+            const opt = {
+                margin: [15, 15, 15, 15],
+                filename: `Student_${stdId}_Report.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, logging: false, letterRendering: true, scrollY: 0, scrollX: 0 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            setTimeout(() => { html2pdf().set(opt).from(wrapper).save(); }, 500);
+        }
+
+        // Event 1: Change capacity helper rules automatically when type alters
+        const rmTypeSelect = document.getElementById('room_type');
+        if (rmTypeSelect) {
+            rmTypeSelect.addEventListener('change', function () {
+                const capInput = document.getElementById('capacity');
+                if (capInput) {
+                    if (this.value === 'AC') capInput.value = 5;
+                    else if (this.value === 'Non-AC') capInput.value = 4;
+                    else capInput.value = '';
+                }
+            });
+        }
+
+        // Event 2: Match dynamic fees calculations instantly when target student loads
+        const payStudentSelect = document.getElementById('pay_student_id');
+        if (payStudentSelect) {
+            payStudentSelect.addEventListener('change', async function () {
+                const studentId = this.value;
+                const amountInput = document.getElementById('amount');
+                if (!studentId) {
+                    if (amountInput) amountInput.value = '';
+                    return;
+                }
+
+                try {
+                    const f1 = new FormData();
+                    const resAlloc = await fetch('allocations.php', { method: 'POST', body: f1 });
+                    const allocs = await resAlloc.json();
+
+                    const activeAlloc = allocs.find(a => String(a.student_id) === String(studentId) && a.status === 'active');
+
+                    if (activeAlloc) {
+                        const f2 = new FormData();
+                        const resRooms = await fetch('rooms.php', { method: 'POST', body: f2 });
+                        const rooms = await resRooms.json();
+
+                        const studentRoom = rooms.find(r => String(r.room_id) === String(activeAlloc.room_id));
+
+                        if (studentRoom && amountInput) {
+                            let type = studentRoom.room_type.toLowerCase();
+                            if (type === 'ac') amountInput.value = 30000;
+                            else amountInput.value = 25000;
+                        }
+                    } else {
+                        if (amountInput) amountInput.value = '';
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            });
+        }
+
+        // Event 3: Instantly drop validation error if a room number exceeds standard inventory count 50
+        const roomNoInput = document.getElementById('room_no');
+        if (roomNoInput) {
+            roomNoInput.addEventListener('blur', function () {
+                const roomNo = parseInt(this.value, 10);
+                if (roomNo > 50) {
+                    alert("There is no such room! Maximum room number allowed is 50.");
+                    this.value = '';
+                    this.focus();
+                }
+            });
+        }
+
+        // Event 4: Live alert if user selects a room that is already full in the allocation panel
+        const allocRoomSelect = document.getElementById('alloc_room_id');
+        if (allocRoomSelect) {
+            allocRoomSelect.addEventListener('change', async function () {
+                const roomId = this.value;
+                if (!roomId) return;
+
+                try {
+                    const resAlloc = await fetch('allocations.php', { method: 'POST', body: new FormData() });
+                    const allocs = await resAlloc.json();
+                    const currentActiveCount = allocs.filter(a => String(a.room_id) === String(roomId) && a.status === 'active').length;
+
+                    const resRooms = await fetch('rooms.php', { method: 'POST', body: new FormData() });
+                    const rooms = await resRooms.json();
+                    const selectedRoom = rooms.find(r => String(r.room_id) === String(roomId));
+
+                    if (selectedRoom) {
+                        const maxCap = parseInt(selectedRoom.capacity, 10);
+                        if (currentActiveCount >= maxCap) {
+                            alert(`Warning: Room ${selectedRoom.room_no} is already FULL (${currentActiveCount}/${maxCap}). Please choose another room!`);
+                            this.value = '';
+                        }
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
